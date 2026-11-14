@@ -18,10 +18,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Install and Build
+      - name: Install and seed
         run: |
           npm ci
           npm -w seeding run seed tree
+
+      # Gem icons are downloaded rather than stored in the repository. Without
+      # them the app falls back to a coloured dot, so a failure here is fine.
+      - name: Download gem icons
+        run: node tools/seed-gem-icons.mjs
+        continue-on-error: true
+
+      - name: Build
+        run: |
           npm -w web run build
           touch web/dist/.nojekyll
 

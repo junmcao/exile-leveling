@@ -25,3 +25,4 @@ dist-ssr
 
 .env
 /common/data/tree/*.json
+/web/public/gem-icons/
