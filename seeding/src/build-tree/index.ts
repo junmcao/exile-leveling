@@ -33,9 +33,14 @@ const PASSIVE_TREE_JSON = {
     "https://raw.githubusercontent.com/grindinggear/skilltree-export/550fb34ae7fca9ec4d760a2ac845bb2ba1032ec3/data.json",
 };
 
+// Optional comma separated list, e.g. TREE_VERSIONS=3_29,3_30, to seed fewer trees
+const ONLY_VERSIONS = process.env.TREE_VERSIONS?.split(",");
+
 export async function buildTemplates() {
   const result = [];
   for (const [version, url] of Object.entries(PASSIVE_TREE_JSON)) {
+    if (ONLY_VERSIONS && !ONLY_VERSIONS.includes(version)) continue;
+
     const rawTree: RawTree.Data = await fetch(url).then((x) => x.json());
 
     const skillTree = buildSkillTree(rawTree);
