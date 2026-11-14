@@ -43,7 +43,7 @@ export function SectionHolder({ name, items }: SectionHolderProps) {
           }}
         >
           {icon}
-          <div>{`--== ${name} ==--`}</div>
+          <div>{name}</div>
           {icon}
         </button>
         <hr />

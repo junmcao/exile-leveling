@@ -1,6 +1,5 @@
 import { TREE_DATA_LOOKUP } from "../../state/tree";
 import type { UrlTree } from "../../state/tree/url-tree";
-import { formStyles } from "../../styles";
 import { randomId } from "../../utility";
 import { SidebarTooltip } from "../SidebarTooltip";
 import { Viewport, type ViewportProps } from "../Viewport";
@@ -14,10 +13,11 @@ import classNames from "classnames";
 import type { SkillTree } from "common";
 import React, { type JSX } from "react";
 import { useEffect, useRef, useState } from "react";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 
 interface SkillTreeViewerProps {
   urlTrees: UrlTree.Data[];
+  // Which of the trees to show
+  index: number;
 }
 
 interface RenderData {
@@ -29,9 +29,9 @@ interface RenderData {
   masteries: UrlTreeDelta["masteries"];
 }
 
-export function SkillTreeViewer({ urlTrees }: SkillTreeViewerProps) {
+export function SkillTreeViewer({ urlTrees, index }: SkillTreeViewerProps) {
   const svgDivRef = useRef<HTMLDivElement>(null);
-  const [curIndex, setCurIndex] = useState<number>(0);
+  const curIndex = index;
   const [renderData, setRenderData] = useState<RenderData>();
   const [styleId] = useState(() => randomId(6));
   const [tooltipNodeId, setTooltipNodeId] = useState<string | null>(null);
@@ -156,27 +156,6 @@ export function SkillTreeViewer({ urlTrees }: SkillTreeViewerProps) {
                 dangerouslySetInnerHTML={{ __html: renderData.svg }}
               />
             </Viewport>
-          </div>
-          <label className={classNames(styles.label)}>
-            {urlTrees.length > 0 && urlTrees[curIndex].name}
-          </label>
-          <div className={classNames(styles.buttons)}>
-            <button
-              className={classNames(formStyles.formButton, styles.button)}
-              onClick={() => {
-                if (curIndex > 0) setCurIndex(curIndex - 1);
-              }}
-            >
-              <HiChevronLeft />
-            </button>
-            <button
-              className={classNames(formStyles.formButton, styles.button)}
-              onClick={() => {
-                if (curIndex < urlTrees.length - 1) setCurIndex(curIndex + 1);
-              }}
-            >
-              <HiChevronRight />
-            </button>
           </div>
         </div>
       )}

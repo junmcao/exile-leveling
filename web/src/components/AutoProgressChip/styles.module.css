@@ -1,0 +1,96 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-3);
+  color: var(--muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.chip:hover {
+  color: var(--on-secondary);
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--accent-primary);
+}
+
+.dot.on {
+  background-color: #6fcf97;
+}
+
+.dot.warn {
+  background-color: #e6c777;
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+  padding: 1.25rem 1.5rem;
+  line-height: 1.5;
+  color: var(--on-primary);
+}
+
+.title {
+  color: var(--on-secondary);
+  font-size: 1.25rem;
+  font-weight: var(--font-heavy);
+}
+
+.heading {
+  margin-top: var(--size-3);
+  color: var(--on-secondary);
+  font-weight: var(--font-heavy);
+}
+
+.note {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-3);
+  padding: var(--size-3) var(--size-4);
+  border-radius: var(--border-radius);
+  background-color: var(--secondary);
+  color: var(--muted);
+}
+
+.code {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-3);
+  color: var(--on-primary);
+}
+
+.code > code {
+  flex: 1;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.action {
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--border-radius);
+  color: var(--on-secondary);
+  background-color: var(--highlight-secondary);
+  cursor: pointer;
+}
+
+.action:hover {
+  background-color: var(--accent-primary);
+}
+
+.link {
+  color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.footer {
+  margin-top: var(--size-3);
+  color: var(--muted);
+  font-size: 0.9rem;
+}

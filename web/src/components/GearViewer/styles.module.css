@@ -1,0 +1,90 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  width: 100%;
+}
+
+.item {
+  border-bottom: var(--border-width) solid var(--accent-secondary);
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4);
+  width: 100%;
+  padding: var(--size-3) 0;
+  text-align: left;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.row:disabled {
+  cursor: default;
+}
+
+.slot {
+  flex: 0 0 5.25rem;
+  font-size: 0.8rem;
+}
+
+.title {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.name {
+  font-weight: var(--font-heavy);
+}
+
+.normal {
+  color: #d0d2d6;
+}
+
+.magic {
+  color: #8fa0ff;
+}
+
+.rare {
+  color: #e6c777;
+}
+
+.unique,
+.relic {
+  color: #d9915a;
+}
+
+.base {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+  padding: 0 0 var(--size-3) calc(5.25rem + var(--size-4));
+  color: var(--on-primary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.sockets {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.implicit {
+  color: var(--accent-blue);
+}
+
+.empty {
+  color: var(--muted);
+}

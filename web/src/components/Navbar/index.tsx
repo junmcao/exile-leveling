@@ -7,6 +7,7 @@ import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import {
   FaBars,
+  FaCrosshairs,
   FaGithub,
   FaMap,
   FaRegClipboard,
@@ -94,11 +95,20 @@ export function Navbar({}: NavbarProps) {
             })}
           >
             <NavbarItem
+              label="Focus"
+              expand={navExpand}
+              icon={<FaCrosshairs className={classNames("inlineIcon")} />}
+              onClick={() => {
+                navigate("/");
+                setNavExpand(false);
+              }}
+            />
+            <NavbarItem
               label="Route"
               expand={navExpand}
               icon={<FaMap className={classNames("inlineIcon")} />}
               onClick={() => {
-                navigate("/");
+                navigate("/route");
                 setNavExpand(false);
               }}
             />
@@ -127,7 +137,7 @@ export function Navbar({}: NavbarProps) {
                   label={x.name}
                   expand={navExpand}
                   onClick={() => {
-                    navigate(`/#section-${x.name.replace(/\s+/g, "_")}`);
+                    navigate(`/route#section-${x.name.replace(/\s+/g, "_")}`);
                     setNavExpand(false);
                   }}
                 />

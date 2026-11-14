@@ -37,7 +37,7 @@ function MapGemId(gemId: string) {
   return gemId;
 }
 
-function decodePathOfBuildingCode(code: string) {
+export function decodePathOfBuildingCode(code: string) {
   const buffer = inflate(decodeBase64Url(code));
 
   const decoder = new TextDecoder();

@@ -1,12 +1,12 @@
 import { CopyToClipboard } from "../CopyToClipboard";
 import { GemCost } from "../GemCost";
+import { GemIcon } from "../GemIcon";
 import { InlineFakeBlock } from "../InlineFakeBlock";
 import { SplitRow } from "../SplitRow";
 import styles from "./styles.module.css";
 import classNames from "classnames";
 import { Data, type RouteData } from "common";
 import type { ReactNode } from "react";
-import { MdCircle } from "react-icons/md";
 
 function ItemRewardVerb(type: ItemRewardProps["rewardType"]) {
   switch (type) {
@@ -62,10 +62,7 @@ export function GemReward({ requiredGem, count, rewardType }: GemRewardProps) {
     <SplitRow
       left={
         <>
-          <MdCircle
-            color={Data.GemColours[gem.primary_attribute]}
-            className={classNames("inlineIcon")}
-          />
+          <GemIcon gem={gem} />
           <ItemReward
             item={gem.name}
             cost={<GemCost gem={gem} />}

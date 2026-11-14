@@ -11,11 +11,15 @@ import flattenChildren from "react-keyed-flatten-children";
 
 interface StepProps {
   step: RouteData.FragmentStep;
+  // Overrides the config setting for whether sub-steps start expanded
+  initialShowSubSteps?: boolean;
 }
 
-export function FragmentStep({ step }: StepProps) {
+export function FragmentStep({ step, initialShowSubSteps }: StepProps) {
   const config = useAtomValue(configSelector);
-  const [showSubSteps, setShowSubSteps] = useState(config.showSubsteps);
+  const [showSubSteps, setShowSubSteps] = useState(
+    initialShowSubSteps ?? config.showSubsteps,
+  );
 
   const headNodes: React.ReactNode[] = [];
   const tailNodes: React.ReactNode[] = [];

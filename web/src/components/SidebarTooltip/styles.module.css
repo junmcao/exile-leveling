@@ -11,6 +11,16 @@
   padding: var(--size-2);
 }
 
+@media (max-width: 1099.98px) {
+  .tooltip {
+    position: fixed;
+    left: var(--size-3);
+    right: var(--size-3);
+    bottom: calc(55vh + var(--size-3));
+    transform: none;
+  }
+}
+
 .tooltip > * {
   line-height: inherit;
 }

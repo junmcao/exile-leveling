@@ -7,7 +7,7 @@ import { withBlank } from "../utility/withBlank";
 import { withScrollRestoration } from "../utility/withScrollRestoration";
 import { Suspense, lazy, useEffect, type JSX } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,6 +15,7 @@ const RoutesContainer = pipe(
   withBlank,
   withScrollRestoration,
 )(lazy(() => import("./Routes")));
+const FocusContainer = withBlank(lazy(() => import("./Focus")));
 const BuildContainer = withBlank(lazy(() => import("./Build")));
 const EditRouteContainer = withBlank(lazy(() => import("./EditRoute")));
 
@@ -30,9 +31,19 @@ export function App() {
             <Route
               path="/"
               element={
-                <Page title="Exile Leveling" component={<RoutesContainer />} />
+                <Page title="Exile Leveling" component={<FocusContainer />} />
               }
             />
+            <Route
+              path="/route"
+              element={
+                <Page
+                  title="Exile Leveling - Route"
+                  component={<RoutesContainer />}
+                />
+              }
+            />
+            <Route path="/focus" element={<Navigate to="/" replace />} />
             <Route
               path="/build"
               element={

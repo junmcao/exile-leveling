@@ -1,8 +1,9 @@
-import { atom } from "jotai";
+import { atom, type Setter } from "jotai";
 import { buildDataSelector } from "./build-data";
 import { configSelector } from "./config";
 import { requiredGemsSelector } from "./gem";
 import { routeFilesSelector } from "./route-files";
+import { routeProgressFamily } from "./route-progress";
 import type { RouteData } from "common";
 import { persistentAtom, transientAtomFamily } from ".";
 import { RESET } from "jotai/utils";
@@ -116,6 +117,50 @@ export function edgeId(edgeIndex: number) {
   return `edge-${edgeIndex}`;
 }
 
+// How many edges ahead a log message may jump, e.g. when an area was skipped
+const RESYNC_WINDOW = 3;
+
+function findEdgeAhead(
+  edges: RouteData.Route["edges"],
+  current: number,
+  areaId: string,
+) {
+  const last = Math.min(current + RESYNC_WINDOW, edges.length - 1);
+  for (let i = current + 1; i <= last; i++) {
+    if (edges[i] === areaId) return i;
+  }
+
+  return null;
+}
+
+// Marks the fragment steps that lead from edge `fromEdge` up to and including
+// the step that enters edge `toEdge`
+function completeStepsBetween(
+  route: RouteData.Route,
+  fromEdge: number,
+  toEdge: number,
+  set: Setter,
+) {
+  let inRange = false;
+  for (let sectionIndex = 0; sectionIndex < route.sections.length; sectionIndex++) {
+    const steps = route.sections[sectionIndex].steps;
+    for (let stepIndex = 0; stepIndex < steps.length; stepIndex++) {
+      const step = steps[stepIndex];
+      if (step.type !== "fragment_step") continue;
+
+      if (step.edgeIndex !== null) {
+        if (step.edgeIndex > toEdge) return;
+        if (step.edgeIndex >= fromEdge) inRange = true;
+      }
+
+      if (inRange)
+        set(routeProgressFamily([sectionIndex, stepIndex].toString()), true);
+
+      if (step.edgeIndex === toEdge) return;
+    }
+  }
+}
+
 export const activeEdgeAtom = atom(
   (get) => get(activeEdgeIndex),
   async (get, set, value: string | typeof RESET) => {
@@ -124,19 +169,24 @@ export const activeEdgeAtom = atom(
       return;
     }
 
-    const edges = (await get(routeSelector)).edges;
-    const nextEdgeIndex = get(activeEdgeAtom)[0] + 1;
-    const nextAreaId = edges[nextEdgeIndex];
-
-    let messageAreaId = null;
     const matches = /Generating level \d+ area "(.*?)"/.exec(value);
-    if (matches !== null) {
-      messageAreaId = matches[1];
-    }
+    if (matches === null) return;
 
-    if (nextAreaId === messageAreaId) {
-      set(activeEdgeIndex, [nextEdgeIndex]);
-    }
+    const route = await get(routeSelector);
+    const currentEdgeIndex = get(activeEdgeIndex)[0];
+    const targetEdgeIndex = findEdgeAhead(
+      route.edges,
+      currentEdgeIndex,
+      matches[1],
+    );
+    if (targetEdgeIndex === null) return;
+
+    // Only an exact next area is trusted enough to check steps off, a skip
+    // could also be an unplanned town portal
+    if (targetEdgeIndex === currentEdgeIndex + 1)
+      completeStepsBetween(route, currentEdgeIndex, targetEdgeIndex, set);
+
+    set(activeEdgeIndex, [targetEdgeIndex]);
   },
 );
 

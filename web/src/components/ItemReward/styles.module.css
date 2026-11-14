@@ -4,7 +4,8 @@
 }
 
 .rewardNote {
-  color: var(--on-secondary);
+  color: var(--muted);
+  font-size: 0.85em;
 }
 
 .noWrap {

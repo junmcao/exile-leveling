@@ -1,67 +1,64 @@
-.gemLinks {
+.cards {
   display: flex;
   flex-direction: column;
+  gap: var(--size-3);
   width: 100%;
 }
 
-.label {
-  text-align: center;
-  color: var(--on-secondary);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  min-height: var(--line-height);
-}
-
-.buttons {
-  display: flex;
-  align-items: stretch;
-  gap: var(--size-2);
-}
-
-.button {
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  height: var(--line-height);
-  flex: 1;
-}
-
-.gemLinkSection {
+.card {
   display: flex;
   flex-direction: column;
-  overflow: auto;
-  overscroll-behavior: contain;
-  gap: var(--size-1);
+  gap: var(--size-3);
+  padding: var(--size-3) var(--size-4);
+  border-radius: var(--border-radius);
+  background-color: var(--highlight-primary);
 }
 
-.gemLinkRow {
+.supports {
   display: flex;
   flex-direction: column;
+  gap: var(--size-3);
+  margin-left: 1.1rem;
+  padding-left: var(--size-4);
+  border-left: 0.125rem solid var(--accent-primary);
 }
 
-.gemLinkTitleInfo {
+.gem {
   display: flex;
-  justify-content: space-between;
-  gap: var(--size-4);
-  padding: var(--size-2) 0;
+  align-items: center;
 }
 
-.gemLinkQuestInfo {
-  display: grid;
-  grid-template-columns: repeat(3, max-content);
-  grid-column-gap: var(--size-4);
-  justify-content: space-between;
+.gem.taken {
+  opacity: 0.45;
 }
 
-.questSeperator {
-  grid-column: 1/4;
+.gemText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .gemPrimary {
-  font-weight: bold;
+  color: var(--on-secondary);
+  font-weight: var(--font-heavy);
 }
 
 .gemSecondary {
-  margin-left: var(--size-4);
+  color: var(--on-primary);
+  font-size: 0.95em;
+}
+
+.check {
+  margin-left: var(--size-3);
+  color: var(--accent-blue);
+  font-size: 0.8em;
+}
+
+.source {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.empty {
+  color: var(--muted);
 }

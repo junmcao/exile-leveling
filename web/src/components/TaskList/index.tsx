@@ -43,7 +43,9 @@ function TaskListItem({
         {
           <span
             aria-hidden
-            className={classNames(styles.edgeTag)}
+            className={classNames(styles.edgeTag, {
+              [styles.edgeNext]: nextEdge,
+            })}
             onClick={(ev) => {
               setNextEdge();
               ev.stopPropagation();

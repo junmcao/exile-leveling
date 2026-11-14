@@ -11,7 +11,7 @@ export const configSelector = persistentAtom<Config>(
   "config",
   {
     gemsOnly: false,
-    showSubsteps: true,
+    showSubsteps: false,
   },
   CONFIG_VERSION,
 );
