@@ -1,12 +1,16 @@
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useAtomCallback } from "jotai/utils";
 import { gemLinksSelector } from "../../state/gem-links";
-import { currentGroupSelector, jumpToGroupAtom } from "../../state/progress";
+import {
+  currentAreaLevelSelector,
+  currentGroupSelector,
+  jumpToGroupAtom,
+} from "../../state/progress";
 import { activeEdgeAtom, nextEdgeAtom } from "../../state/route";
 import { searchStringsSelector } from "../../state/search-strings";
 import { sidebarAtom, type SidebarTab } from "../../state/sidebar";
 import { urlTreesSelector, type UrlTree } from "../../state/tree/url-tree";
-import { normalizeGroupName } from "../../utility/group-name";
+import { groupForLevel, normalizeGroupName } from "../../utility/group-name";
 import { gearSetsSelector, type GearSet } from "../../state/pob/gear";
 import { GearViewer } from "../GearViewer";
 import { GemLinkViewer } from "../GemLinkViewer";
@@ -99,7 +103,12 @@ export function Sidebar() {
   );
 
   // Follows the route by default, a pick holds until the route moves on
-  const currentKey = currentGroup ? normalizeGroupName(currentGroup) : null;
+  // The range for your level, or for ranges that aren't level based, the one
+  // of the next gem to get
+  const areaLevel = useAtomValue(currentAreaLevelSelector);
+  const currentKey =
+    (areaLevel !== null ? groupForLevel(groups, areaLevel) : null) ??
+    (currentGroup ? normalizeGroupName(currentGroup) : null);
   const activeEdge = useAtomValue(activeEdgeAtom)[0];
   const [pinned, setPinned] = useState<{ key: string; edge: number } | null>(
     null,
@@ -115,7 +124,7 @@ export function Sidebar() {
     }, []),
   );
   async function onPickGroup(group: Group) {
-    const moved = await jumpToGroup(group.key);
+    const moved = await jumpToGroup(group);
 
     // The pick holds until the route moves to another area
     setPinned({ key: group.key, edge: moved ? moved.to : activeEdge });

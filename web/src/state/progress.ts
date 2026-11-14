@@ -1,9 +1,9 @@
-import { atom, type WritableAtom } from "jotai";
-import type { RouteData } from "common";
+import { atom, type Getter, type WritableAtom } from "jotai";
+import { Data, type RouteData } from "common";
 import { gemProgressFamily } from "./gem-progress";
 import { activeEdgeAtom, nextEdgeAtom, routeSelector } from "./route";
 import { routeProgressFamily } from "./route-progress";
-import { normalizeGroupName } from "../utility/group-name";
+import { groupStartLevel, normalizeGroupName } from "../utility/group-name";
 
 export interface Task {
   sectionName: string;
@@ -72,25 +72,58 @@ export const currentIndexSelector = atom(async (get) => {
   return findCurrentIndex(tasks, completed, get(activeEdgeAtom)[0]);
 });
 
-// Moves the route to where a level range starts, the first gem step of that
-// range in the area it takes place in. Returns the areas moved from and to, or
-// null when the range has no step to go to. Steps passed are left as they were.
+// The first area outside of town that is at or above a level, which is roughly
+// where a character of that level is
+async function findEdgeForLevel(get: Getter, level: number | null) {
+  if (level === null) return null;
+
+  const { edges } = await get(routeSelector);
+  const edge = edges.findIndex((areaId) => {
+    const area = Data.Areas[areaId];
+    return area !== undefined && !area.is_town_area && area.level >= level;
+  });
+
+  return edge >= 0 ? edge : null;
+}
+
+// The level of the area you are in, or of the last one outside of town while
+// you are in town. Null when the route has no area levels to go by.
+export const currentAreaLevelSelector = atom(async (get) => {
+  const { edges } = await get(routeSelector);
+
+  for (let i = Math.min(get(activeEdgeAtom)[0], edges.length - 1); i >= 0; i--) {
+    const area = Data.Areas[edges[i]];
+    if (area !== undefined && !area.is_town_area) return area.level;
+  }
+
+  return null;
+});
+
+// Moves the route to where a level range starts: where a character of its
+// starting level would be, or for ranges that aren't level based the area of
+// their first gem. Returns the areas moved from and to, or null when there is
+// nowhere to go. Steps passed are left as they were.
 export const jumpToGroupAtom = atom(
   null,
-  async (get, set, groupKey: string) => {
-    const tasks = await get(tasksSelector);
+  async (get, set, group: { key: string; label: string }) => {
+    let edge = await findEdgeForLevel(get, groupStartLevel(group.label));
 
-    const target = tasks.findIndex(
-      (task) =>
-        task.step.type === "gem_step" &&
-        task.step.requiredGem.note !== undefined &&
-        normalizeGroupName(task.step.requiredGem.note) === groupKey,
-    );
-    if (target < 0) return null;
+    // Ranges that aren't level based go to where their first gem is available
+    if (edge === null) {
+      const tasks = await get(tasksSelector);
 
-    let edge: number | null = null;
-    for (let i = target; i >= 0 && edge === null; i--) edge = tasks[i].edgeIndex;
-    if (edge === null) return null;
+      const target = tasks.findIndex(
+        (task) =>
+          task.step.type === "gem_step" &&
+          task.step.requiredGem.note !== undefined &&
+          normalizeGroupName(task.step.requiredGem.note) === group.key,
+      );
+      if (target < 0) return null;
+
+      for (let i = target; i >= 0 && edge === null; i--)
+        edge = tasks[i].edgeIndex;
+      if (edge === null) return null;
+    }
 
     const from = get(activeEdgeAtom)[0];
     if (edge === from) return null;
