@@ -117,15 +117,20 @@ export function edgeId(edgeIndex: number) {
   return `edge-${edgeIndex}`;
 }
 
-// How many edges ahead a log message may jump, e.g. when an area was skipped
-const RESYNC_WINDOW = 3;
+// How many edges ahead a log message may jump when areas are done in a
+// different order than the route. A real run needed jumps of up to 14 to get
+// through the campaign, while a window of 3 stalled in Act 2. Towns are visited
+// again and again, so a town only counts when it is close.
+const RESYNC_WINDOW = 15;
+const RESYNC_WINDOW_TOWN = 3;
 
 function findEdgeAhead(
   edges: RouteData.Route["edges"],
   current: number,
   areaId: string,
 ) {
-  const last = Math.min(current + RESYNC_WINDOW, edges.length - 1);
+  const window = areaId.endsWith("_town") ? RESYNC_WINDOW_TOWN : RESYNC_WINDOW;
+  const last = Math.min(current + window, edges.length - 1);
   for (let i = current + 1; i <= last; i++) {
     if (edges[i] === areaId) return i;
   }
